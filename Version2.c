@@ -111,21 +111,28 @@ void resolution_sup(float **M , float *b, float *x , unsigned n,unsigned m)
         x[i]=b[i];
         for(j=i+1;j<min(n,m+i);j++){
             x[i]-=M[i][j]*x[j];
+
         }
         x[i]=x[i]/M[i][i];
     }
 }
 
 
-void gauss(float **mat,unsigned n,unsigned m){
+void gauss(float **mat,float *b,unsigned n,unsigned m){
     unsigned i,j,p ; 
     for(p=0;p<n-1;p++){
         for(i=p+1;i<n;i++){
             mat[i][p] /= mat[p][p] ;
+            b[i]/= mat[p][p] ;
+
             for(j=max(p+1,i-m);j<=min(n-1,i+m+1);j++){
                 mat[i][j] = mat[i][j] - mat[i][p]*mat[p][j];
             }
+            
+            b[i]= b[i]-mat[i][p] * b[p] ;
+            
         }
+        
     }
 
 }
@@ -140,14 +147,14 @@ void gauss(float **mat,unsigned n,unsigned m){
 int main(){
 
     unsigned i,j;
-    unsigned n=4 ;
+    unsigned n=3 ;
     unsigned m=1 ;
     
     //vecteur X
     float *x ;
     x = (float*)calloc(n,sizeof(float));
     //vecteur B
-    float b[4]={22,45,69,12};
+    float b[4]={22,45,69};
     //Matrice M
     float **mat = (float**)malloc(sizeof(float*)*n);
     
@@ -161,7 +168,8 @@ int main(){
     printf("\n\n\n Matrice M \n m = %d \n n = %d \n",m,n);
     affiche_matrice(mat,n);
     printf("\n Applique de Gause voici le résultat");
-    gauss(mat,n,m);
+    gauss(mat,b,n,m);
+    Affiche_V(b,n);
     affiche_matrice(mat,n);
 
 
@@ -172,4 +180,5 @@ int main(){
 
     printf("\n :) \n");
 
+    return 0;
 }
